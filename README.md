@@ -1,7 +1,7 @@
 - 👋 Hi, I’m @Kudu001
 - 👀 I’m interested in programming
 - 🌱 I’m currently learning IT
-- 💞️ I’m looking to collaborate on everybody
+- 💞️ I’m looking to collaborate with everybody
 - 📫 How to reach me ...
 - 😄 Pronouns: He
 - ⚡ Fun fact: ...
