@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Subjects - School Management System{% endblock %}
+
+{% block header %}Subjects{% endblock %}
+
+{% block toolbar %}
+<a href="{{ url_for('add_subject') }}" class="btn btn-primary">
+    <i class="fas fa-plus"></i> Add Subject
+</a>
+{% endblock %}
+
+{% block content %}
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">All Subjects</h6>
+    </div>
+    <div class="card-body">
+        {% if subjects %}
+        <div class="table-responsive">
+            <table class="table table-bordered" id="subjectsTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Subject Name</th>
+                        <th>Classes Assigned</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for subject in subjects %}
+                    <tr>
+                        <td>{{ subject.subject_id }}</td>
+                        <td>{{ subject.subject_name }}</td>
+                        <td>
+                            {% if subject.class_subjects %}
+                                <span class="badge bg-info">{{ subject.class_subjects|length }} classes</span>
+                            {% else %}
+                                <span class="text-muted">No classes assigned</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-4">
+            <i class="fas fa-book fa-3x text-muted mb-3"></i>
+            <h4 class="text-muted">No Subjects Found</h4>
+            <p class="text-muted">Start by adding your first subject to the system.</p>
+            <a href="{{ url_for('add_subject') }}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Add First Subject
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

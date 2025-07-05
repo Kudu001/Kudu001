@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Add Subject - School Management System{% endblock %}
+
+{% block header %}Add New Subject{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <div class="card shadow">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Subject Information</h6>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="subject_name" class="form-label">Subject Name <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="subject_name" name="subject_name" 
+                               placeholder="e.g., Mathematics, English, Science" required>
+                    </div>
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{{ url_for('subjects') }}" class="btn btn-secondary me-md-2">
+                            <i class="fas fa-times"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Save Subject
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

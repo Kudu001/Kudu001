@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}Teachers - School Management System{% endblock %}
+
+{% block header %}Teachers{% endblock %}
+
+{% block toolbar %}
+<a href="{{ url_for('add_teacher') }}" class="btn btn-primary">
+    <i class="fas fa-plus"></i> Add Teacher
+</a>
+{% endblock %}
+
+{% block content %}
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">All Teachers</h6>
+    </div>
+    <div class="card-body">
+        {% if teachers %}
+        <div class="table-responsive">
+            <table class="table table-bordered" id="teachersTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Contact</th>
+                        <th>Specialization</th>
+                        <th>Classes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for teacher in teachers %}
+                    <tr>
+                        <td>{{ teacher.teacher_id }}</td>
+                        <td>{{ teacher.full_name }}</td>
+                        <td>{{ teacher.email or 'N/A' }}</td>
+                        <td>{{ teacher.contact_number or 'N/A' }}</td>
+                        <td>{{ teacher.specialization or 'N/A' }}</td>
+                        <td>
+                            {% if teacher.classes %}
+                                {% for class in teacher.classes %}
+                                    <span class="badge bg-primary">{{ class.class_name }}</span>
+                                {% endfor %}
+                            {% else %}
+                                <span class="text-muted">No classes assigned</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-4">
+            <i class="fas fa-chalkboard-teacher fa-3x text-muted mb-3"></i>
+            <h4 class="text-muted">No Teachers Found</h4>
+            <p class="text-muted">Start by adding your first teacher to the system.</p>
+            <a href="{{ url_for('add_teacher') }}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Add First Teacher
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

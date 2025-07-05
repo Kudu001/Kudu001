@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}Grades - School Management System{% endblock %}
+
+{% block header %}Grades{% endblock %}
+
+{% block toolbar %}
+<a href="{{ url_for('add_grade') }}" class="btn btn-primary">
+    <i class="fas fa-plus"></i> Add Grade
+</a>
+{% endblock %}
+
+{% block content %}
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">All Grades</h6>
+    </div>
+    <div class="card-body">
+        {% if grades %}
+        <div class="table-responsive">
+            <table class="table table-bordered" id="gradesTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Student</th>
+                        <th>Subject</th>
+                        <th>Class</th>
+                        <th>Term</th>
+                        <th>Score</th>
+                        <th>Date Recorded</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for grade in grades %}
+                    <tr>
+                        <td>{{ grade.grade_id }}</td>
+                        <td>{{ grade.student.full_name }}</td>
+                        <td>{{ grade.class_subject.subject.subject_name }}</td>
+                        <td>{{ grade.class_subject.class_ref.class_name }}</td>
+                        <td>{{ grade.term }}</td>
+                        <td>
+                            {% if grade.score %}
+                                <span class="badge {% if grade.score >= 80 %}bg-success{% elif grade.score >= 60 %}bg-warning{% else %}bg-danger{% endif %}">
+                                    {{ grade.score }}
+                                </span>
+                            {% else %}
+                                <span class="text-muted">N/A</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ grade.date_recorded.strftime('%Y-%m-%d') }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-4">
+            <i class="fas fa-chart-line fa-3x text-muted mb-3"></i>
+            <h4 class="text-muted">No Grades Found</h4>
+            <p class="text-muted">Start by adding your first grade to the system.</p>
+            <a href="{{ url_for('add_grade') }}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Add First Grade
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

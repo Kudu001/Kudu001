@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}Add Grade - School Management System{% endblock %}
+
+{% block header %}Add New Grade{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card shadow">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Grade Information</h6>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="student_id" class="form-label">Student <span class="text-danger">*</span></label>
+                                <select class="form-select" id="student_id" name="student_id" required>
+                                    <option value="">Select Student</option>
+                                    {% for student in students %}
+                                        <option value="{{ student.student_id }}">{{ student.full_name }} ({{ student.current_class.class_name if student.current_class else 'No class' }})</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="class_subject_id" class="form-label">Subject <span class="text-danger">*</span></label>
+                                <select class="form-select" id="class_subject_id" name="class_subject_id" required>
+                                    <option value="">Select Subject</option>
+                                    {% for class_subject in class_subjects %}
+                                        <option value="{{ class_subject.class_subject_id }}">{{ class_subject.subject.subject_name }} - {{ class_subject.class_ref.class_name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="term" class="form-label">Term <span class="text-danger">*</span></label>
+                                <select class="form-select" id="term" name="term" required>
+                                    <option value="">Select Term</option>
+                                    <option value="First Term">First Term</option>
+                                    <option value="Second Term">Second Term</option>
+                                    <option value="Third Term">Third Term</option>
+                                    <option value="Final">Final</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="score" class="form-label">Score</label>
+                                <input type="number" class="form-control" id="score" name="score" 
+                                       min="0" max="100" step="0.01" placeholder="0-100">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{{ url_for('grades') }}" class="btn btn-secondary me-md-2">
+                            <i class="fas fa-times"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Save Grade
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

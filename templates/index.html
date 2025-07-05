@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - School Management System{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Total Teachers
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                            {{ teachers_count if teachers_count is defined else 0 }}
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-chalkboard-teacher fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-success shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                            Total Students
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                            {{ students_count if students_count is defined else 0 }}
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-user-graduate fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-info shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                            Total Classes
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                            {{ classes_count if classes_count is defined else 0 }}
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-users fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-warning shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                            Total Subjects
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                            {{ subjects_count if subjects_count is defined else 0 }}
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-book fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-6">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Quick Actions</h6>
+            </div>
+            <div class="card-body">
+                <div class="list-group list-group-flush">
+                    <a href="{{ url_for('add_teacher') }}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-plus text-success"></i> Add New Teacher
+                    </a>
+                    <a href="{{ url_for('add_student') }}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-plus text-success"></i> Add New Student
+                    </a>
+                    <a href="{{ url_for('add_class') }}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-plus text-success"></i> Add New Class
+                    </a>
+                    <a href="{{ url_for('add_subject') }}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-plus text-success"></i> Add New Subject
+                    </a>
+                    <a href="{{ url_for('add_attendance') }}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-calendar-check text-primary"></i> Record Attendance
+                    </a>
+                    <a href="{{ url_for('add_grade') }}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-chart-line text-info"></i> Add Grade
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">System Overview</h6>
+            </div>
+            <div class="card-body">
+                <p class="mb-4">Welcome to the School Management System. This application helps you manage:</p>
+                <ul class="list-unstyled">
+                    <li><i class="fas fa-check text-success"></i> Teacher information and specializations</li>
+                    <li><i class="fas fa-check text-success"></i> Student records and enrollment</li>
+                    <li><i class="fas fa-check text-success"></i> Class organization and assignments</li>
+                    <li><i class="fas fa-check text-success"></i> Subject management</li>
+                    <li><i class="fas fa-check text-success"></i> Grade tracking and reporting</li>
+                    <li><i class="fas fa-check text-success"></i> Daily attendance records</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
