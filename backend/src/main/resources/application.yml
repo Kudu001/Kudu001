@@ -1,0 +1,133 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+
+spring:
+  application:
+    name: university-archive
+  
+  datasource:
+    url: jdbc:postgresql://localhost:5432/university_archive
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
+    
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    show-sql: false
+    
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.xml
+    
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+      
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${JWT_ISSUER_URI:http://localhost:8080}
+
+# AWS Configuration
+aws:
+  region: ${AWS_REGION:us-east-1}
+  s3:
+    bucket-name: ${AWS_S3_BUCKET:university-archive-documents}
+    documents-prefix: documents/
+    temp-prefix: temp/
+  credentials:
+    access-key: ${AWS_ACCESS_KEY_ID:}
+    secret-key: ${AWS_SECRET_ACCESS_KEY:}
+
+# JWT Configuration
+jwt:
+  secret: ${JWT_SECRET:mySecretKey123456789012345678901234567890}
+  expiration: 86400000 # 24 hours
+  refresh-expiration: 604800000 # 7 days
+
+# AI Service Configuration
+ai-service:
+  base-url: ${AI_SERVICE_URL:http://localhost:8001}
+  timeout: 300000 # 5 minutes
+
+# File Processing Configuration
+file-processing:
+  allowed-extensions:
+    - pdf
+    - doc
+    - docx
+    - txt
+    - rtf
+  max-file-size: 104857600 # 100MB in bytes
+  text-extraction:
+    max-pages: 1000
+
+# Logging Configuration
+logging:
+  level:
+    com.university.archive: DEBUG
+    org.springframework.security: DEBUG
+    org.springframework.web: INFO
+  pattern:
+    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+
+# Management and Monitoring
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: when_authorized
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+
+# Springdoc OpenAPI
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operationsSorter: method
+
+---
+# Development Profile
+spring:
+  config:
+    activate:
+      on-profile: dev
+  jpa:
+    show-sql: true
+  h2:
+    console:
+      enabled: true
+
+logging:
+  level:
+    com.university.archive: DEBUG
+    org.springframework.security: DEBUG
+
+---
+# Production Profile
+spring:
+  config:
+    activate:
+      on-profile: prod
+  jpa:
+    show-sql: false
+
+logging:
+  level:
+    root: WARN
+    com.university.archive: INFO

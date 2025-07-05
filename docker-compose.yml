@@ -1,0 +1,168 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  db:
+    image: postgres:15-alpine
+    container_name: university-archive-db
+    environment:
+      POSTGRES_DB: university_archive
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
+    networks:
+      - university-archive-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Redis for caching and task queue
+  redis:
+    image: redis:7-alpine
+    container_name: university-archive-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - university-archive-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Kotlin Spring Boot Backend
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: university-archive-backend
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=postgres
+      - DATABASE_URL=jdbc:postgresql://db:5432/university_archive
+      - REDIS_URL=redis://redis:6379/0
+      - AI_SERVICE_URL=http://ai-service:8001
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_REGION=${AWS_REGION:-us-east-1}
+      - AWS_S3_BUCKET=${AWS_S3_BUCKET:-university-archive-documents}
+      - JWT_SECRET=${JWT_SECRET:-mySecretKey123456789012345678901234567890}
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - university-archive-network
+    volumes:
+      - backend_logs:/app/logs
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/api/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Python AI Service
+  ai-service:
+    build:
+      context: ./ai-service
+      dockerfile: Dockerfile
+    container_name: university-archive-ai
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/university_archive
+      - REDIS_URL=redis://redis:6379/0
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_REGION=${AWS_REGION:-us-east-1}
+      - AWS_S3_BUCKET=${AWS_S3_BUCKET:-university-archive-documents}
+      - SENTENCE_TRANSFORMER_MODEL=all-MiniLM-L6-v2
+      - SIMILARITY_THRESHOLD=0.8
+      - MAX_CONCURRENT_JOBS=3
+      - LOG_LEVEL=INFO
+    ports:
+      - "8001:8001"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - university-archive-network
+    volumes:
+      - ai_models:/app/models
+      - ai_logs:/app/logs
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # React Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: university-archive-frontend
+    environment:
+      - REACT_APP_API_URL=http://localhost:8080/api
+      - REACT_APP_AI_SERVICE_URL=http://localhost:8001
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - university-archive-network
+    volumes:
+      - ./frontend/src:/app/src
+      - ./frontend/public:/app/public
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Nginx Reverse Proxy
+  nginx:
+    image: nginx:alpine
+    container_name: university-archive-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./docker/nginx/ssl:/etc/nginx/ssl
+    depends_on:
+      - frontend
+      - backend
+      - ai-service
+    networks:
+      - university-archive-network
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  backend_logs:
+    driver: local
+  ai_models:
+    driver: local
+  ai_logs:
+    driver: local
+
+networks:
+  university-archive-network:
+    driver: bridge
