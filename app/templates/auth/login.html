@@ -1,0 +1,273 @@
+{% extends "base.html" %}
+
+{% block title %}Login - Hospital Management System{% endblock %}
+
+{% block content %}
+<div class="min-vh-100 d-flex align-items-center bg-light">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-5 col-md-7">
+                <div class="card shadow-lg border-0">
+                    <div class="card-body p-5">
+                        <!-- Hospital Logo/Header -->
+                        <div class="text-center mb-4">
+                            <div class="mb-3">
+                                <i class="fas fa-hospital-alt fa-3x text-primary"></i>
+                            </div>
+                            <h2 class="card-title text-center mb-2">Hospital Management System</h2>
+                            <p class="text-muted">Please sign in to your account</p>
+                        </div>
+
+                        <!-- Login Form -->
+                        <form method="POST">
+                            <div class="mb-3">
+                                <label for="username" class="form-label">Username</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="fas fa-user"></i>
+                                    </span>
+                                    <input type="text" class="form-control" id="username" name="username" 
+                                           placeholder="Enter your username" required autofocus>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="password" class="form-label">Password</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="fas fa-lock"></i>
+                                    </span>
+                                    <input type="password" class="form-control" id="password" name="password" 
+                                           placeholder="Enter your password" required>
+                                    <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="mb-3 d-flex justify-content-between align-items-center">
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="remember" name="remember">
+                                    <label class="form-check-label" for="remember">
+                                        Remember me
+                                    </label>
+                                </div>
+                                <a href="{{ url_for('auth.forgot_password') }}" class="text-decoration-none">
+                                    Forgot password?
+                                </a>
+                            </div>
+
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="fas fa-sign-in-alt me-2"></i>
+                                    Sign In
+                                </button>
+                            </div>
+                        </form>
+
+                        <!-- Demo Accounts Info -->
+                        <div class="mt-4">
+                            <hr>
+                            <div class="text-center">
+                                <small class="text-muted">Demo Accounts</small>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-6">
+                                    <div class="card border-primary">
+                                        <div class="card-body p-2 text-center">
+                                            <small class="text-primary fw-bold">Admin</small><br>
+                                            <small>admin / admin123</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="card border-success">
+                                        <div class="card-body p-2 text-center">
+                                            <small class="text-success fw-bold">Doctor</small><br>
+                                            <small>doctor / doctor123</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-6">
+                                    <div class="card border-info">
+                                        <div class="card-body p-2 text-center">
+                                            <small class="text-info fw-bold">Nurse</small><br>
+                                            <small>nurse / nurse123</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="card border-warning">
+                                        <div class="card-body p-2 text-center">
+                                            <small class="text-warning fw-bold">Receptionist</small><br>
+                                            <small>receptionist / recep123</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- System Features -->
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <div class="card border-0 bg-transparent">
+                            <div class="card-body text-center">
+                                <i class="fas fa-users fa-2x text-primary mb-2"></i>
+                                <h6>Patient Management</h6>
+                                <small class="text-muted">Comprehensive patient records and history</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card border-0 bg-transparent">
+                            <div class="card-body text-center">
+                                <i class="fas fa-calendar-check fa-2x text-success mb-2"></i>
+                                <h6>Appointment Scheduling</h6>
+                                <small class="text-muted">Efficient appointment booking and management</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card border-0 bg-transparent">
+                            <div class="card-body text-center">
+                                <i class="fas fa-file-invoice-dollar fa-2x text-warning mb-2"></i>
+                                <h6>Billing System</h6>
+                                <small class="text-muted">Streamlined billing and payment processing</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card border-0 bg-transparent">
+                            <div class="card-body text-center">
+                                <i class="fas fa-boxes fa-2x text-info mb-2"></i>
+                                <h6>Inventory Management</h6>
+                                <small class="text-muted">Track medical supplies and equipment</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .min-vh-100 {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .card {
+        backdrop-filter: blur(10px);
+        background-color: rgba(255, 255, 255, 0.95);
+    }
+
+    .input-group-text {
+        background-color: #f8f9fa;
+        border-right: none;
+    }
+
+    .form-control {
+        border-left: none;
+    }
+
+    .form-control:focus {
+        border-color: #3498db;
+        box-shadow: none;
+    }
+
+    .form-control:focus + .input-group-text {
+        border-color: #3498db;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #3498db, #2980b9);
+        border: none;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
+    }
+
+    .card.border-primary,
+    .card.border-success,
+    .card.border-info,
+    .card.border-warning {
+        border-width: 2px !important;
+        background-color: rgba(255, 255, 255, 0.8);
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .card {
+        animation: fadeInUp 0.6s ease-out;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Toggle password visibility
+    document.getElementById('togglePassword').addEventListener('click', function() {
+        const passwordField = document.getElementById('password');
+        const icon = this.querySelector('i');
+        
+        if (passwordField.type === 'password') {
+            passwordField.type = 'text';
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+        } else {
+            passwordField.type = 'password';
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+        }
+    });
+
+    // Demo account quick login
+    document.querySelectorAll('.card.border-primary, .card.border-success, .card.border-info, .card.border-warning').forEach(function(card) {
+        card.addEventListener('click', function() {
+            const text = this.textContent;
+            if (text.includes('admin')) {
+                document.getElementById('username').value = 'admin';
+                document.getElementById('password').value = 'admin123';
+            } else if (text.includes('Doctor')) {
+                document.getElementById('username').value = 'doctor';
+                document.getElementById('password').value = 'doctor123';
+            } else if (text.includes('Nurse')) {
+                document.getElementById('username').value = 'nurse';
+                document.getElementById('password').value = 'nurse123';
+            } else if (text.includes('Receptionist')) {
+                document.getElementById('username').value = 'receptionist';
+                document.getElementById('password').value = 'recep123';
+            }
+        });
+    });
+
+    // Form validation
+    document.querySelector('form').addEventListener('submit', function(e) {
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+        
+        if (!username || !password) {
+            e.preventDefault();
+            showAlert('Please enter both username and password.', 'danger');
+        }
+    });
+</script>
+{% endblock %}
