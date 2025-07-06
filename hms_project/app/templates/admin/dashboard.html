@@ -1,0 +1,371 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - HMS{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0">
+        <i class="bi bi-speedometer2 me-2"></i>
+        Admin Dashboard
+    </h1>
+    <div class="d-flex gap-2">
+        <button class="btn btn-outline-primary btn-sm" onclick="location.reload()">
+            <i class="bi bi-arrow-clockwise me-1"></i>Refresh
+        </button>
+        <div class="btn-group">
+            <button class="btn btn-primary btn-sm dropdown-toggle" data-bs-toggle="dropdown">
+                <i class="bi bi-plus-circle me-1"></i>Quick Actions
+            </button>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="{{ url_for('admin.create_user') }}"><i class="bi bi-person-plus me-2"></i>Add User</a></li>
+                <li><a class="dropdown-item" href="{{ url_for('admin.create_staff') }}"><i class="bi bi-person-badge me-2"></i>Add Staff</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="{{ url_for('admin.reports') }}"><i class="bi bi-file-earmark-text me-2"></i>View Reports</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Statistics Cards -->
+<div class="row g-4 mb-4">
+    <div class="col-xl-3 col-md-6">
+        <div class="stat-card">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h3 class="mb-1">{{ total_patients }}</h3>
+                    <p class="mb-0 opacity-75">Total Patients</p>
+                </div>
+                <div class="text-end">
+                    <i class="bi bi-people fs-1 opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-3 col-md-6">
+        <div class="stat-card success">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h3 class="mb-1">{{ total_staff }}</h3>
+                    <p class="mb-0 opacity-75">Active Staff</p>
+                </div>
+                <div class="text-end">
+                    <i class="bi bi-person-badge fs-1 opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-3 col-md-6">
+        <div class="stat-card warning">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h3 class="mb-1">{{ today_appointments }}</h3>
+                    <p class="mb-0 opacity-75">Today's Appointments</p>
+                </div>
+                <div class="text-end">
+                    <i class="bi bi-calendar-check fs-1 opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-3 col-md-6">
+        <div class="stat-card danger">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h3 class="mb-1">${{ "%.2f"|format(total_revenue) }}</h3>
+                    <p class="mb-0 opacity-75">Total Revenue</p>
+                </div>
+                <div class="text-end">
+                    <i class="bi bi-currency-dollar fs-1 opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts and Recent Activities -->
+<div class="row g-4">
+    <!-- Revenue Chart -->
+    <div class="col-lg-8">
+        <div class="card h-100">
+            <div class="card-header bg-transparent border-0 pb-0">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="bi bi-graph-up me-2"></i>
+                        Monthly Revenue
+                    </h5>
+                    <div class="btn-group btn-group-sm">
+                        <input type="radio" class="btn-check" name="period" id="period6" checked>
+                        <label class="btn btn-outline-primary" for="period6">6M</label>
+                        <input type="radio" class="btn-check" name="period" id="period12">
+                        <label class="btn btn-outline-primary" for="period12">1Y</label>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <canvas id="revenueChart" width="400" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Recent Activities -->
+    <div class="col-lg-4">
+        <div class="card h-100">
+            <div class="card-header bg-transparent border-0 pb-0">
+                <h5 class="mb-0">
+                    <i class="bi bi-clock-history me-2"></i>
+                    Recent Activities
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="timeline">
+                    {% for patient in recent_patients %}
+                    <div class="timeline-item">
+                        <div class="timeline-marker bg-primary"></div>
+                        <div class="timeline-content">
+                            <h6 class="mb-1">New Patient Registered</h6>
+                            <p class="mb-1 text-muted">{{ patient.full_name }}</p>
+                            <small class="text-muted">{{ patient.created_at.strftime('%Y-%m-%d %H:%M') }}</small>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Data Tables -->
+<div class="row g-4 mt-2">
+    <!-- Recent Appointments -->
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header bg-transparent border-0 pb-0">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="bi bi-calendar-event me-2"></i>
+                        Upcoming Appointments
+                    </h5>
+                    <a href="{{ url_for('admin.appointments') }}" class="btn btn-sm btn-outline-primary">View All</a>
+                </div>
+            </div>
+            <div class="card-body">
+                {% if recent_appointments %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Patient</th>
+                                <th>Doctor</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for appointment in recent_appointments %}
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-person-circle text-muted me-2"></i>
+                                        {{ appointment.patient.full_name }}
+                                    </div>
+                                </td>
+                                <td>{{ appointment.doctor.full_name }}</td>
+                                <td>
+                                    <small>{{ appointment.appointment_date.strftime('%m/%d') }}</small><br>
+                                    <small class="text-muted">{{ appointment.appointment_time.strftime('%H:%M') }}</small>
+                                </td>
+                                <td>
+                                    <span class="badge bg-{{ 'success' if appointment.status == 'confirmed' else 'warning' if appointment.status == 'scheduled' else 'primary' }}">
+                                        {{ appointment.status|title }}
+                                    </span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="bi bi-calendar-x text-muted" style="font-size: 3rem;"></i>
+                    <p class="text-muted mt-2">No upcoming appointments</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Low Stock Items -->
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header bg-transparent border-0 pb-0">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="bi bi-exclamation-triangle text-warning me-2"></i>
+                        Low Stock Items
+                    </h5>
+                    <a href="{{ url_for('admin.inventory') }}?low_stock=true" class="btn btn-sm btn-outline-warning">View All</a>
+                </div>
+            </div>
+            <div class="card-body">
+                {% if low_stock_items %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th>Category</th>
+                                <th>Stock</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in low_stock_items %}
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-box text-muted me-2"></i>
+                                        {{ item.name }}
+                                    </div>
+                                </td>
+                                <td>{{ item.category }}</td>
+                                <td>
+                                    <span class="fw-bold">{{ item.current_stock }}</span>
+                                    <small class="text-muted">/ {{ item.minimum_stock }}</small>
+                                </td>
+                                <td>
+                                    <span class="badge bg-{{ 'danger' if item.current_stock == 0 else 'warning' }}">
+                                        {{ 'Out of Stock' if item.current_stock == 0 else 'Low Stock' }}
+                                    </span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="bi bi-check-circle text-success" style="font-size: 3rem;"></i>
+                    <p class="text-muted mt-2">All items are well stocked</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.timeline {
+    position: relative;
+}
+
+.timeline-item {
+    position: relative;
+    padding-left: 25px;
+    margin-bottom: 20px;
+}
+
+.timeline-marker {
+    position: absolute;
+    left: 0;
+    top: 5px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+
+.timeline-item:not(:last-child)::before {
+    content: '';
+    position: absolute;
+    left: 4px;
+    top: 15px;
+    width: 2px;
+    height: calc(100% + 5px);
+    background-color: #e5e7eb;
+}
+
+.timeline-content h6 {
+    font-size: 0.875rem;
+}
+
+.timeline-content p {
+    font-size: 0.875rem;
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Revenue data from server
+var monthlyRevenueData = {{ monthly_revenue | tojson | safe }};
+
+// Revenue Chart
+document.addEventListener('DOMContentLoaded', function() {
+    const ctx = document.getElementById('revenueChart').getContext('2d');
+    const revenueChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: monthlyRevenueData.map(function(item) { return item.month; }),
+            datasets: [{
+                label: 'Revenue ($)',
+                data: monthlyRevenueData.map(function(item) { return item.revenue; }),
+                borderColor: 'rgb(37, 99, 235)',
+                backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                tension: 0.4,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return '$' + value.toLocaleString();
+                        }
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return 'Revenue: $' + context.parsed.y.toLocaleString();
+                        }
+                    }
+                }
+            }
+        }
+    });
+});
+
+// Auto-refresh dashboard data
+setInterval(function() {
+    fetch('/api/stats/dashboard')
+        .then(function(response) { return response.json(); })
+        .then(function(data) {
+            // Update statistics cards
+            if (data.total_patients !== undefined) {
+                var patientCard = document.querySelector('.stat-card h3');
+                if (patientCard) patientCard.textContent = data.total_patients;
+            }
+            if (data.total_staff !== undefined) {
+                var staffCard = document.querySelector('.stat-card.success h3');
+                if (staffCard) staffCard.textContent = data.total_staff;
+            }
+            if (data.today_appointments !== undefined) {
+                var appointmentCard = document.querySelector('.stat-card.warning h3');
+                if (appointmentCard) appointmentCard.textContent = data.today_appointments;
+            }
+        })
+        .catch(function(error) { console.error('Error:', error); });
+}, 30000); // Refresh every 30 seconds
+</script>
+{% endblock %}
