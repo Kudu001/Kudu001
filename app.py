@@ -231,15 +231,77 @@ def add_class():
         )
         try:
             db.session.add(class_obj)
+            db.session.flush()  # Flush to get the class_id
+            
+            # Handle subject assignments
+            subject_ids = request.form.getlist('subject_ids[]')
+            subject_teacher_ids = request.form.getlist('subject_teacher_ids[]')
+            
+            for i, subject_id in enumerate(subject_ids):
+                if subject_id and i < len(subject_teacher_ids) and subject_teacher_ids[i]:
+                    # Check if this subject is already assigned to this class
+                    existing = ClassSubject.query.filter_by(
+                        class_id=class_obj.class_id,
+                        subject_id=subject_id
+                    ).first()
+                    
+                    if not existing:
+                        class_subject = ClassSubject(
+                            class_id=class_obj.class_id,
+                            subject_id=subject_id,
+                            teacher_id=subject_teacher_ids[i]
+                        )
+                        db.session.add(class_subject)
+            
             db.session.commit()
-            flash('Class added successfully!', 'success')
+            flash('Class and subjects added successfully!', 'success')
             return redirect(url_for('classes'))
         except Exception as e:
             db.session.rollback()
-            flash('Error adding class.', 'error')
+            flash('Error adding class and subjects.', 'error')
     
     teachers = Teacher.query.all()
-    return render_template('add_class.html', teachers=teachers)
+    subjects = Subject.query.all()
+    return render_template('add_class.html', teachers=teachers, subjects=subjects)
+
+@app.route('/classes/<int:class_id>/subjects', methods=['GET', 'POST'])
+def manage_class_subjects(class_id):
+    class_obj = Class.query.get_or_404(class_id)
+    
+    if request.method == 'POST':
+        # Remove existing class subjects
+        ClassSubject.query.filter_by(class_id=class_id).delete()
+        
+        # Add new subject assignments
+        subject_ids = request.form.getlist('subject_ids[]')
+        subject_teacher_ids = request.form.getlist('subject_teacher_ids[]')
+        
+        try:
+            for i, subject_id in enumerate(subject_ids):
+                if subject_id and i < len(subject_teacher_ids) and subject_teacher_ids[i]:
+                    class_subject = ClassSubject(
+                        class_id=class_id,
+                        subject_id=subject_id,
+                        teacher_id=subject_teacher_ids[i]
+                    )
+                    db.session.add(class_subject)
+            
+            db.session.commit()
+            flash('Class subjects updated successfully!', 'success')
+            return redirect(url_for('classes'))
+        except Exception as e:
+            db.session.rollback()
+            flash('Error updating class subjects.', 'error')
+    
+    teachers = Teacher.query.all()
+    subjects = Subject.query.all()
+    current_assignments = ClassSubject.query.filter_by(class_id=class_id).all()
+    
+    return render_template('manage_class_subjects.html', 
+                         class_obj=class_obj, 
+                         teachers=teachers, 
+                         subjects=subjects,
+                         current_assignments=current_assignments)
 
 @app.route('/subjects')
 def subjects():
@@ -362,6 +424,35 @@ def create_tables():
                 db.session.add(teacher)
             for subject in sample_subjects:
                 db.session.add(subject)
+            
+            db.session.commit()
+            
+            # Add sample classes
+            sample_classes = [
+                Class(class_name='Grade 9A', academic_year='2023-2024', teacher_id=1),
+                Class(class_name='Grade 9B', academic_year='2023-2024', teacher_id=2),
+                Class(class_name='Grade 10A', academic_year='2023-2024', teacher_id=3),
+                Class(class_name='Grade 10B', academic_year='2023-2024', teacher_id=4)
+            ]
+            
+            for class_obj in sample_classes:
+                db.session.add(class_obj)
+            
+            db.session.commit()
+            
+            # Add sample class-subject assignments
+            sample_assignments = [
+                ClassSubject(class_id=1, subject_id=1, teacher_id=1),  # Grade 9A - Math - John
+                ClassSubject(class_id=1, subject_id=2, teacher_id=2),  # Grade 9A - English - Sarah
+                ClassSubject(class_id=1, subject_id=3, teacher_id=3),  # Grade 9A - Science - Michael
+                ClassSubject(class_id=2, subject_id=1, teacher_id=1),  # Grade 9B - Math - John
+                ClassSubject(class_id=2, subject_id=2, teacher_id=2),  # Grade 9B - English - Sarah
+                ClassSubject(class_id=3, subject_id=1, teacher_id=1),  # Grade 10A - Math - John
+                ClassSubject(class_id=3, subject_id=4, teacher_id=4),  # Grade 10A - History - Emily
+            ]
+            
+            for assignment in sample_assignments:
+                db.session.add(assignment)
             
             db.session.commit()
 

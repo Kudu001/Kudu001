@@ -26,6 +26,8 @@
                         <th>Academic Year</th>
                         <th>Homeroom Teacher</th>
                         <th>Student Count</th>
+                        <th>Subjects</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -43,6 +45,24 @@
                         </td>
                         <td>
                             <span class="badge bg-info">{{ class.students|length }} students</span>
+                        </td>
+                        <td>
+                            {% if class.class_subjects %}
+                                {% for class_subject in class.class_subjects %}
+                                    <div class="mb-1">
+                                        <span class="badge bg-success">{{ class_subject.subject.subject_name }}</span>
+                                        <small class="text-muted">by {{ class_subject.teacher.full_name }}</small>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                <span class="text-muted">No subjects assigned</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{{ url_for('manage_class_subjects', class_id=class.class_id) }}" 
+                               class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-cogs"></i> Manage Subjects
+                            </a>
                         </td>
                     </tr>
                     {% endfor %}
