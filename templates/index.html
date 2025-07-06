@@ -3,6 +3,30 @@
 {% block title %}Dashboard - School Management System{% endblock %}
 
 {% block content %}
+<!-- Welcome Section -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card bg-gradient-primary text-white shadow">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h3 class="mb-1">Welcome to School Management System</h3>
+                        <p class="mb-0">
+                            {% if current_user.is_authenticated %}
+                                Hello, {{ current_user.username }}! You are logged in as {{ current_user.role|title }}.
+                            {% else %}
+                                Please log in to access the system.
+                            {% endif %}
+                        </p>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-graduation-cap fa-3x opacity-75"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <div class="row">
     <div class="col-xl-3 col-md-6 mb-4">
         <div class="card border-left-primary shadow h-100 py-2">
@@ -135,4 +159,148 @@
         </div>
     </div>
 </div>
+
+<!-- Charts Section -->
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">System Statistics Overview</h6>
+            </div>
+            <div class="card-body">
+                <canvas id="systemChart" width="400" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Distribution</h6>
+            </div>
+            <div class="card-body">
+                <canvas id="distributionChart" width="400" height="400"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Activity -->
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 d-flex align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Recent System Activity</h6>
+                <small class="text-muted">Last 24 hours</small>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 text-center">
+                        <div class="p-3">
+                            <i class="fas fa-user-plus fa-2x text-success mb-2"></i>
+                            <h5 class="mb-0">{{ new_users_today or 0 }}</h5>
+                            <small class="text-muted">New Users</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3 text-center">
+                        <div class="p-3">
+                            <i class="fas fa-chart-line fa-2x text-info mb-2"></i>
+                            <h5 class="mb-0">{{ new_grades_today or 0 }}</h5>
+                            <small class="text-muted">Grades Added</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3 text-center">
+                        <div class="p-3">
+                            <i class="fas fa-calendar-check fa-2x text-warning mb-2"></i>
+                            <h5 class="mb-0">{{ attendance_today or 0 }}</h5>
+                            <small class="text-muted">Attendance Records</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3 text-center">
+                        <div class="p-3">
+                            <i class="fas fa-users fa-2x text-primary mb-2"></i>
+                            <h5 class="mb-0">{{ active_users or 0 }}</h5>
+                            <small class="text-muted">Active Users</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// System Overview Chart
+const ctx1 = document.getElementById('systemChart').getContext('2d');
+const systemChart = new Chart(ctx1, {
+    type: 'bar',
+    data: {
+        labels: ['Teachers', 'Students', 'Classes', 'Subjects'],
+        datasets: [{
+            label: 'Count',
+            data: [{{ teachers_count or 0 }}, {{ students_count or 0 }}, {{ classes_count or 0 }}, {{ subjects_count or 0 }}],
+            backgroundColor: [
+                'rgba(102, 126, 234, 0.8)',
+                'rgba(54, 162, 235, 0.8)',
+                'rgba(255, 206, 86, 0.8)',
+                'rgba(75, 192, 192, 0.8)'
+            ],
+            borderColor: [
+                'rgba(102, 126, 234, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)'
+            ],
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true,
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        },
+        plugins: {
+            legend: {
+                display: false
+            }
+        }
+    }
+});
+
+// Distribution Pie Chart
+const ctx2 = document.getElementById('distributionChart').getContext('2d');
+const distributionChart = new Chart(ctx2, {
+    type: 'doughnut',
+    data: {
+        labels: ['Teachers', 'Students', 'Classes'],
+        datasets: [{
+            data: [{{ teachers_count or 0 }}, {{ students_count or 0 }}, {{ classes_count or 0 }}],
+            backgroundColor: [
+                'rgba(102, 126, 234, 0.8)',
+                'rgba(54, 162, 235, 0.8)',
+                'rgba(255, 206, 86, 0.8)'
+            ],
+            borderColor: [
+                'rgba(102, 126, 234, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)'
+            ],
+            borderWidth: 2
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'bottom'
+            }
+        }
+    }
+});
+</script>
 {% endblock %}

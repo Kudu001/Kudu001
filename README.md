@@ -1,6 +1,17 @@
-# School Management System
+# 🎓 Enhanced School Management System - Final Year Project
 
-A comprehensive web-based School Management System built with Flask and SQLAlchemy, based on a complete database schema with proper relationships.
+A comprehensive, professional-grade School Management System built with Flask and SQLAlchemy. This system has been enhanced with advanced features including authentication, data visualization, report generation, and modern UI/UX design - perfect for a final-year project.
+
+## 🌟 Enhanced Features (NEW!)
+
+- 🔐 **User Authentication & Role-Based Access Control**
+- 📊 **Interactive Dashboard with Charts & Analytics**
+- 📈 **Professional Report Generation (PDF & Excel)**
+- 🔍 **Comprehensive Audit Trail System**
+- 🎨 **Modern, Responsive UI with Data Visualization**
+- 🔒 **Security Best Practices & Data Protection**
+
+[👉 **See Complete Feature Documentation**](ENHANCED_FEATURES.md)
 
 ## Features
 
@@ -68,6 +79,17 @@ The application implements a complete relational database with the following ent
 5. **Open your browser** and navigate to:
    ```
    http://localhost:5000
+   ```
+
+6. **Login with default credentials**:
+   ```
+   Admin Account:
+   Username: admin
+   Password: admin123
+   
+   Teacher Account:
+   Username: john_smith
+   Password: teacher123
    ```
 
 ## Usage

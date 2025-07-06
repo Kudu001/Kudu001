@@ -1,0 +1,238 @@
+{% extends "base.html" %}
+
+{% block title %}Reports - School Management System{% endblock %}
+
+{% block header %}Reports & Analytics{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Data Export & Reports</h6>
+            </div>
+            <div class="card-body">
+                <p class="text-muted mb-4">Generate comprehensive reports and export data in various formats for analysis and record-keeping.</p>
+                
+                <div class="row">
+                    <!-- Student Reports -->
+                    <div class="col-lg-6 mb-4">
+                        <div class="card border-left-primary h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <i class="fas fa-user-graduate text-primary me-2"></i>
+                                    Student Reports
+                                </h5>
+                                <p class="card-text">Export comprehensive student data including personal information, enrollment details, and class assignments.</p>
+                                <div class="btn-group" role="group">
+                                    <a href="{{ url_for('export_students_pdf') }}" class="btn btn-outline-danger">
+                                        <i class="fas fa-file-pdf me-1"></i> PDF
+                                    </a>
+                                    <a href="{{ url_for('export_students_excel') }}" class="btn btn-outline-success">
+                                        <i class="fas fa-file-excel me-1"></i> Excel
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Grades Reports -->
+                    <div class="col-lg-6 mb-4">
+                        <div class="card border-left-success h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <i class="fas fa-chart-line text-success me-2"></i>
+                                    Grades Reports
+                                </h5>
+                                <p class="card-text">Export detailed grade information including student performance across all subjects and terms.</p>
+                                <div class="btn-group" role="group">
+                                    <a href="{{ url_for('export_grades_pdf') }}" class="btn btn-outline-danger">
+                                        <i class="fas fa-file-pdf me-1"></i> PDF
+                                    </a>
+                                    <button class="btn btn-outline-success" disabled>
+                                        <i class="fas fa-file-excel me-1"></i> Excel (Coming Soon)
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Attendance Reports -->
+                    <div class="col-lg-6 mb-4">
+                        <div class="card border-left-warning h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <i class="fas fa-calendar-check text-warning me-2"></i>
+                                    Attendance Reports
+                                </h5>
+                                <p class="card-text">Generate attendance summaries and track student presence patterns over time.</p>
+                                <div class="btn-group" role="group">
+                                    <button class="btn btn-outline-danger" disabled>
+                                        <i class="fas fa-file-pdf me-1"></i> PDF (Coming Soon)
+                                    </button>
+                                    <button class="btn btn-outline-success" disabled>
+                                        <i class="fas fa-file-excel me-1"></i> Excel (Coming Soon)
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Teacher Reports -->
+                    <div class="col-lg-6 mb-4">
+                        <div class="card border-left-info h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <i class="fas fa-chalkboard-teacher text-info me-2"></i>
+                                    Teacher Reports
+                                </h5>
+                                <p class="card-text">Export teacher information, specializations, and class assignments for administrative purposes.</p>
+                                <div class="btn-group" role="group">
+                                    <button class="btn btn-outline-danger" disabled>
+                                        <i class="fas fa-file-pdf me-1"></i> PDF (Coming Soon)
+                                    </button>
+                                    <button class="btn btn-outline-success" disabled>
+                                        <i class="fas fa-file-excel me-1"></i> Excel (Coming Soon)
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Analytics Section -->
+<div class="row">
+    <div class="col-12">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">System Analytics</h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-lg-8">
+                        <h5>Grade Distribution Analysis</h5>
+                        <canvas id="gradeDistributionChart" width="400" height="200"></canvas>
+                    </div>
+                    <div class="col-lg-4">
+                        <h5>Class Size Distribution</h5>
+                        <canvas id="classSizeChart" width="400" height="400"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Export History -->
+<div class="row">
+    <div class="col-12">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Recent Export Activity</h6>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>User</th>
+                                <th>Report Type</th>
+                                <th>Format</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>{{ moment().format('YYYY-MM-DD HH:mm') if moment else 'N/A' }}</td>
+                                <td>{{ current_user.username if current_user.is_authenticated else 'System' }}</td>
+                                <td>Student Report</td>
+                                <td><span class="badge bg-danger">PDF</span></td>
+                                <td><span class="badge bg-success">Completed</span></td>
+                            </tr>
+                            <tr class="text-muted">
+                                <td colspan="5" class="text-center">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    Export history will be tracked here in future versions
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Grade Distribution Chart
+const ctx3 = document.getElementById('gradeDistributionChart').getContext('2d');
+const gradeDistributionChart = new Chart(ctx3, {
+    type: 'line',
+    data: {
+        labels: ['0-20', '21-40', '41-60', '61-80', '81-100'],
+        datasets: [{
+            label: 'Number of Grades',
+            data: [2, 5, 15, 25, 18], // Sample data
+            backgroundColor: 'rgba(102, 126, 234, 0.1)',
+            borderColor: 'rgba(102, 126, 234, 1)',
+            borderWidth: 2,
+            fill: true,
+            tension: 0.4
+        }]
+    },
+    options: {
+        responsive: true,
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        },
+        plugins: {
+            legend: {
+                display: false
+            }
+        }
+    }
+});
+
+// Class Size Chart
+const ctx4 = document.getElementById('classSizeChart').getContext('2d');
+const classSizeChart = new Chart(ctx4, {
+    type: 'pie',
+    data: {
+        labels: ['Small (1-15)', 'Medium (16-25)', 'Large (26+)'],
+        datasets: [{
+            data: [2, 3, 1], // Sample data
+            backgroundColor: [
+                'rgba(75, 192, 192, 0.8)',
+                'rgba(255, 206, 86, 0.8)',
+                'rgba(255, 99, 132, 0.8)'
+            ],
+            borderColor: [
+                'rgba(75, 192, 192, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(255, 99, 132, 1)'
+            ],
+            borderWidth: 2
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'bottom'
+            }
+        }
+    }
+});
+</script>
+{% endblock %}
